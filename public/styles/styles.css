@@ -4,6 +4,16 @@ body, html{
 	padding: 0;
 }
 
+#logo {
+	color: #fff;
+	font-weight: 100;
+	margin-top: 10px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	margin-left: 10px;
+	font-size: 18px;
+}
+
 ul.sidebar{
 	position: absolute;
 	width: 210px;
@@ -20,6 +30,7 @@ ul.sidebar{
 
 	list-style: none;
 }
+
 ul.sidebar li{
 	position: relative;
 	display: block;
@@ -50,4 +61,26 @@ ul.sidebar li a:hover{
 	min-height: 200px;
 	top: 0;
 	left: 0;
+}
+.text-center {
+	text-align: center;
+	font-weight: 100;
+	font-size: 36px;
+}
+
+#fbgraph {
+width: 300px;
+margin: 6px;
+margin-top: auto;
+cursor: pointer;
+}
+
+.loader {
+	width: 300px;
+	margin-top: 60px;
+}
+
+#list {
+width: 300px;
+height: 100%;
 }

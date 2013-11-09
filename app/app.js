@@ -7,10 +7,10 @@ var express = require('express'),
 	async = require('async'),
 	request = require('request'),
 	secretCookie = 'mongolia',
+	child = require('child_process'),
 	cookieParser = express.cookieParser(secretCookie),
-
-	server, io, schemaLG, helper;
-
+	server, io, schemaLG, helper,
+	ObjectID = require('mongodb').ObjectID;
 
 
 app.configure(function() {
@@ -42,7 +42,7 @@ io.set('authorization', function (handshake, accept) {
 	}
 });
 
-
+global.counter = 0;
 
 var findRelated = function(keyword, socketCB, n, eachCB){
 	if( n == null ){ n = 2; }
@@ -100,13 +100,88 @@ var findRelated = function(keyword, socketCB, n, eachCB){
 		}
 	});
 };
+/*
+function translatePhrase(data) {
+	s.src = "http://api.microsofttranslator.com/V2/Ajax.svc/Translate&from=" 
+				+ encodeURIComponent(from) +
+                "&to=" + encodeURIComponent(to) +
+                "&text=" + encodeURIComponent(text)
 
+    request({
+		url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(query)+"%27",
+		auth: {
+			'user': 'hiroki.osame@gmail.com',
+			'pass': 'MP2WykKO3YUL/Gfww+RKEYgW0XyjfAtNvHDli6/+lH0',
+		}
+}
+*/
+function calculateRatings(data,socket,callback) {
+	for (var i = data.words.length - 1; i >= 0; i--) {
+		queryRating(data.words[i],socket,callback);
+	};
+	for (var i = data.bigrams.length - 1; i >= 0; i--) {
+		queryRating(data.bigrams[i],socket,callback);
+	};
+	for (var i = data.trigrams.length - 1; i >= 0; i--) {
+		queryRating(data.trigrams[i],socket,callback);
+	};
+}
+
+function queryRating(phrase,socket,callback) {
+	console.log(socket);
+	var query;
+	if (typeof phrase === 'string') {
+		query = phrase;
+	} else {
+		query = phrase.join(' ');
+	}
+	console.log(query);
+	mongoose.Freq.findOne({'query': query }, function (err, found){
+		if (found) {
+			global.counter += 1;
+			console.log("concept.." + global.counter)
+			socket.emit("PHRASE",{"phrase " : query, "score" : found.score})
+			return;
+		}
+
+		request({
+			url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(query)+"%27",
+			auth: {
+				'user': 'hiroki.osame@gmail.com',
+				'pass': 'MP2WykKO3YUL/Gfww+RKEYgW0XyjfAtNvHDli6/+lH0',
+			}
+
+		}, function (error, response, body) {
+			global.counter += 1;
+			console.log("bing.." + global.counter)
+			try {
+				var parsedBody = JSON.parse(body);
+				if (isNan(WebTotal)) {
+					var score = 0;
+				} else {
+					var score = Number(parsedBody.WebTotal);
+				}
+				socket.emit("PHRASE",{"phrase " : query, "score" : score})
+			} catch(err) {
+				
+			}
+		});
+		
+		request({
+			url: "http://conceptnet5.media.mit.edu/data/5.1/c/en/" + query
+		},function (error, response, body) {
+			global.counter += 1;
+			console.log("concept.." + global.counter)
+			var score = Number(JSON.parse(body).maxScore); // HIROKI PLEASE HELP ME HERE
+			socket.emit("PHRASE",{"phrase " : query, "score" : score});
+		});
+	});
+}
 
 
 io.on('connection', function (socket) {
-
-
 	socket.on("bing-search", function(keyword) {
+
 
 		findRelated(keyword, socket.emit.bind(this, "bing-searchComplete"));
 
@@ -114,10 +189,20 @@ io.on('connection', function (socket) {
 
 	socket.on('fbUserData',function(fbdata) {
 		console.log("Incoming socket: fbUserData...");
-		console.log(fbdata)
-	});
+		var l = new mongoose.Corpus({text : fbdata});
+		l.save(function(err){
+			console.log("saved");
+			var python = child.spawn('python', ['nlp/freq.py', l._id.toString()]);
+			python.stdout.on('data', function (data) {
+				console.log("get shit from python")
+				data = JSON.parse(data);
+				calculateRatings(data,socket,function(result){
+				});
 
-})
+			});
+		});
+	});
+});
 
 
 /* Routes */
@@ -132,5 +217,14 @@ app.get('/', function(req, res){
 });
 app.get('/sigma', function(req, res){
 	res.render('sigma');
+});
+
+app.get('/asl', function(req, res){
+	var data = {
+		test : "1"
+	}
+	res.render('asl',{
+		data : data,
+	});
 });
 

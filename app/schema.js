@@ -11,6 +11,17 @@ exports.Related = mongoose.model('Related', {
 	},
 	related: [String]
 });
+
+exports.Corpus = mongoose.model('Corpus', {
+	text : String
+});
+
+
+exports.Freq = mongoose.model('Freq', {
+	query : String,
+	score : Number
+});
+
 exports.connect = function() {
 	mongoose.connect('mongodb://localhost/yhack');
 

@@ -1,4 +1,4 @@
-window.fbAsyncInit = function() {
+(function() {
 //$(document).on('click',"#fbRegistration") {
   FB.init({
     appId      : '182257815299017', // App ID
@@ -7,7 +7,6 @@ window.fbAsyncInit = function() {
     cookie     : true, // enable cookies to allow the server to access the session
     xfbml      : true  // parse XFBML
   });
-
   // Here we subscribe to the auth.authResponseChange JavaScript event. This event is fired
   // for any authentication related change, such as login, logout or session refresh. This means that
   // whenever someone who was previously logged out tries to log in again, the correct case below
@@ -41,7 +40,7 @@ window.fbAsyncInit = function() {
       //FB.login(cb, { scope: 'email' });
     }
   });
-  };
+})();
 
   // Load the SDK asynchronously
   (function(d){
@@ -62,6 +61,11 @@ window.fbAsyncInit = function() {
   }
 
   function testMe(){
+    // remove icon change it to loading bar
+    $("#nl-form").remove();
+    $("<div>",{id:'list'}).appendTo("body");
+
+
     //FB.login();
     console.log('log')
     FB.login(function(response) {
@@ -80,13 +84,14 @@ window.fbAsyncInit = function() {
           //console.log(messages[key].comments.data[0].message);
           var tmp = messages[key].comments.data;
           for (var key1 in tmp){
-            userdata = userdata + tmp[key1].message
+            userdata = userdata + tmp[key1].message;
           }
           //userdata = userdata + messages[key].comments.data[0].message
 
         }
         console.log(userdata)
         window.socket.emit('fbUserData', userdata);
+        //FB.logout()
         //return userdata
 /*
         http.get("https://graph.facebook.com/me/inbox", function(res) {
@@ -110,7 +115,7 @@ window.fbAsyncInit = function() {
       // });
       });
       }
-    });
+    },{scope: 'read_mailbox'});
     //extendedprem();
   }
   /*function extendedprem(){
