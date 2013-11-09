@@ -43,9 +43,9 @@ print("\n\n\n")
 # EXPORTING TO PYMONGO
 
 xxx = {
-	"words" : vocab1[:100],
-	"bigrams" : vocab2[:100],
-	"trigrams" : vocab3[:100]
+	"words" : vocab1[:80],
+	"bigrams" : vocab2[:80],
+	"trigrams" : vocab3[:80]
 }
 
 print(json.dumps(xxx))
