@@ -25,6 +25,7 @@
     "request" : "*",
     "validator" : "*",
     "jade" : "*",
-    "mongodb" : "*"
+    "mongodb" : "*",
+    "request" : "*"
   }
 }

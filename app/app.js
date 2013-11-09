@@ -42,7 +42,7 @@ io.set('authorization', function (handshake, accept) {
 	}
 });
 
-
+global.counter = 0;
 
 var findRelated = function(keyword, callBack, n){
 	if( n == null ){ n = 2; }
@@ -99,6 +99,89 @@ var findRelated = function(keyword, callBack, n){
 };
 
 
+function calculateRatings(data,callback) {
+	async.parallel({
+		words : function(callback){
+			async.map(data.words,queryRating,callback);
+		},
+		bigrams : function(callback){
+			async.map(data.bigrams,queryRating,callback);
+		},
+		trigrams : function(callback){
+			async.map(data.trigrams,queryRating,callback);
+		}
+	},function(err,r){
+		if (err) {
+			console.log("error 1");
+			callback([false,false,false])
+		}
+		r.words.sort(function(a,b){
+			return b.score - a.score;
+		});
+		r.bigrams.sort(function(a,b){
+			return b.score - a.score;
+		});
+		r.trigrams.sort(function(a,b){
+			return b.score - a.score;
+		});
+
+		r.words = r.words.slice(0,20);
+		r.bigrams = r.bigrams.slice(0,20);
+		r.trigrams = r.trigrams.slice(0,20);
+		callback(r);
+	});
+}
+
+
+function queryRating(phrase,callback) {
+	var query;
+	if (typeof phrase === 'string') {
+		query = phrase;
+	} else {
+		query = phrase.join(' ');
+	}
+	async.parallel({
+		bing: function(callback){
+			request({
+				url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(query)+"%27",
+				auth: {
+					'user': 'hiroki.osame@gmail.com',
+					'pass': 'MP2WykKO3YUL/Gfww+RKEYgW0XyjfAtNvHDli6/+lH0',
+				}
+			}, function (error, response, body) {
+				global.counter += 1;
+				console.log("bing.." + global.counter)
+				try {
+					var parsedBody = JSON.parse(body);
+					var score = Number(parsedBody.WebTotal);
+					callback(error,score);
+				}catch(err) {
+					callback(null,0);
+				}
+			});
+		},
+		concept: function(callback){
+
+			request({
+				url: "http://conceptnet5.media.mit.edu/data/5.1/c/en/" + query
+			},function (error, response, body) {
+				global.counter += 1;
+				console.log("concept.." + global.counter)
+				var score = Number(JSON.parse(body).maxScore); // HIROKI PLEASE HELP ME HERE
+				callback(error,score);
+			});
+		}
+	},function(err, r) {
+		if (err) {
+			console.log("MongoDB error: finding song for adding track id : " + songID);
+			callback([false,"Database error"])
+			return;
+		}
+		callback(null,{"phrase " : query, "score" : r.bing + r.concept * 1000} );
+	});
+}
+
+
 
 io.on('connection', function (socket) {
 
@@ -125,14 +208,18 @@ io.on('connection', function (socket) {
 
 	socket.on('fbUserData',function(fbdata) {
 		console.log("Incoming socket: fbUserData...");
-		console.log(fbdata);
 		var l = new mongoose.Corpus({text : fbdata});
 		l.save(function(err){
 			console.log("saved");
 			var python = child.spawn('python', ['nlp/freq.py', l._id.toString()]);
 			python.stdout.on('data', function (data) {
-				JSON.parse(data);
-				console.log(data.toString());
+				console.log("get shit from python")
+				data = JSON.parse(data);
+				calculateRatings(data,function(result){
+					console.log("I can't believe it ");
+					console.log(result);
+				});
+				
 			});
 		});
 	});

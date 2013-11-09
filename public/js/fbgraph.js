@@ -1,4 +1,4 @@
-window.fbAsyncInit = function() {
+(function() {
 //$(document).on('click',"#fbRegistration") {
   FB.init({
     appId      : '182257815299017', // App ID
@@ -7,7 +7,6 @@ window.fbAsyncInit = function() {
     cookie     : true, // enable cookies to allow the server to access the session
     xfbml      : true  // parse XFBML
   });
-
   // Here we subscribe to the auth.authResponseChange JavaScript event. This event is fired
   // for any authentication related change, such as login, logout or session refresh. This means that
   // whenever someone who was previously logged out tries to log in again, the correct case below
@@ -41,7 +40,7 @@ window.fbAsyncInit = function() {
       //FB.login(cb, { scope: 'email' });
     }
   });
-  };
+})();
 
   // Load the SDK asynchronously
   (function(d){
