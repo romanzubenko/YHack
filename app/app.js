@@ -135,12 +135,13 @@ function queryRating(phrase,socket,callback) {
 	} else {
 		query = phrase.join(' ');
 	}
-	console.log(query);
+
+	console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!QUERY :" + query);
 	mongoose.Freq.findOne({'query': query }, function (err, found){
 		if (found) {
 			global.counter += 1;
 			console.log("concept.." + global.counter)
-			socket.emit("PHRASE",{"phrase " : query, "score" : found.score})
+			socket.emit("PHRASE",{"phrase" : query, "score" : found.score})
 			return;
 		}
 
@@ -161,7 +162,9 @@ function queryRating(phrase,socket,callback) {
 				} else {
 					var score = Number(parsedBody.WebTotal);
 				}
-				socket.emit("PHRASE",{"phrase " : query, "score" : score})
+				console.log("!!!!!!!!!!!!!!!DONE")
+				console.log({"phrase" : query, "score" : score})
+				socket.emit("PHRASE",{"phrase" : query, "score" : score})
 			} catch(err) {
 				
 			}
@@ -173,7 +176,9 @@ function queryRating(phrase,socket,callback) {
 			global.counter += 1;
 			console.log("concept.." + global.counter)
 			var score = Number(JSON.parse(body).maxScore); // HIROKI PLEASE HELP ME HERE
-			socket.emit("PHRASE",{"phrase " : query, "score" : score});
+			console.log("!!!!!!!!!!!!!!!DONE")
+			console.log({"phrase " : query, "score" : score})
+			socket.emit("PHRASE",{"phrase" : query, "score" : score});
 		});
 	});
 }
