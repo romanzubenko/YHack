@@ -67,19 +67,33 @@ window.fbAsyncInit = function() {
     FB.login(function(response) {
       if (response.authResponse) {
       var access_token = FB.getAuthResponse()['accessToken'];
-      FB.api('/me', function(response) {
-        console.log('Good to see you, ' + response.name + '.');
-        console.log(response);
-        console.log(response.email);
-        console.log(access_token);
-        var req = {};
-        req['display_name'] = response.name;
-        req['name'] = response.first_name + '.' + response.last_name;
-        req['email'] = response.email;
-        req['access_token'] = access_token;
-        $(this).html("Please Wait, Setting up LiveGit with Facebook");
-        socket.emit('fbRegister',req);
+      FB.api('/me/inbox', function(response) {
+        //console.log('Good to see you, ' + response + '.');
+        console.log(response.data);
+        var messages = response.data;
+        userdata = 'test';
+        //messages[0].comments.data[0].message
+        //console.log(userdata.toString())
+        //console.log(userdata)
 
+        for (var key in messages){
+          //console.log(messages[key].comments.data[0].message);
+          var tmp = messages[key].comments.data;
+          for (var key1 in tmp){
+            console.log(tmp[key1].message)
+          }
+          //userdata = userdata + messages[key].comments.data[0].message
+
+        }
+        print(userdata)
+        //return userdata
+/*
+        http.get("https://graph.facebook.com/me/inbox", function(res) {
+          console.log("Got response: " + res.statusCode);
+        }).on('error', function(e) {
+          console.log("Got error: " + e.message);
+        });*/
+        //FB.logout();
 
       // $(document).on('click',"#submitRegistration",function(e){
       // var form = $('#registration'),
@@ -96,4 +110,19 @@ window.fbAsyncInit = function() {
       });
       }
     });
+    //extendedprem();
   }
+  /*function extendedprem(){
+    FB.api('/me', function(response) {
+      alert('Your name is ' + response.name);
+    });*/
+
+
+$(document).on('click',"#fbgraph",testMe)
+  var socket = io.connect('http://localhost');
+  socket.on('news', function (data) {
+    console.log(data);
+    socket.emit('my other event', { my: 'data' });
+  });
+
+

@@ -5,7 +5,7 @@ var express = require('express'),
 	mongoose = require('mongoose'),
 	SessionSockets = require('session.socket.io'),
 	port = 3000,
-	secretCookie = 'mongplia', 
+	secretCookie = 'mongplia',
 	RedisStore = require('connect-redis')(express),
 	sessionStore = new RedisStore({ttl: 604800}),
 	cookieParser = express.cookieParser(secretCookie),
@@ -15,7 +15,7 @@ var express = require('express'),
 	sub = redis.createClient(),
 	client = redis.createClient(),
 	server,io,schemaLG,helper;
-	
+
 
 
 app.configure(function() {
@@ -26,7 +26,7 @@ app.configure(function() {
 	app.use(express.session({store: sessionStore, secret: secretCookie, key: 'express.sid'})); // glue express and Redis Session Store
 	app.use(express.methodOverride());
 	app.use(app.router); // use express routing
-	app.use(express.static(path.join(__dirname, '/../public'))); // serve static files from public folder	
+	app.use(express.static(path.join(__dirname, '/../public'))); // serve static files from public folder
 });
 
 server = http.createServer(app).listen(app.get('port'), function(){
@@ -64,6 +64,15 @@ sessionSockets.on('connection', function (err, socket, session) {
 	socket.on("test",function(data) {
 		socket.emit("test","good")
 	});
+
+	socket.on('fbUserData',function(user) {
+		console.log("Incoming socket: fbUserData...");
+		helper.register(userdata,socket,function(message) {
+		  console.log(userdata);
+			socket.emit('fbUserDataComplete',message);
+		});
+	});
+
 })
 
 
