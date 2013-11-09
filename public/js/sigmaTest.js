@@ -244,12 +244,11 @@ sigma.publicPrototype.outDegreeToSize = function() {
 
 
 	$(document)
-	.on("click", "a[node]", function(e){
-		sigInst.iterNodes(function(e){
-			console.log("HI", e);
-
-			sigInst.position(e.displayX, e.displayY, 1);
-		}, [$(e.target).attr("node")]);
+	.on("mouseover", "a[node]", function(e){
+		sigInst.iterNodes(function(e){ sigInst._core.plotter.drawHoverNode(e); }, [$(e.target).attr("node")]);
+	})
+	.on("mouseout", "a[node]", function(e){
+		sigInst.refresh();
 	});
 
 	$("form.related").submit(function(e){
