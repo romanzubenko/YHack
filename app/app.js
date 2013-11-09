@@ -66,6 +66,7 @@ var findRelated = function(keyword, callBack, n){
 
 		}else{
 			console.log("made a request");
+			/*
 			request({
 				url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(keyword)+"%27",
 				auth: {
@@ -92,6 +93,7 @@ var findRelated = function(keyword, callBack, n){
 					});
 				});
 			});
+			*/
 		}
 	});
 };
