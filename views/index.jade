@@ -25,9 +25,15 @@ html(lang="en")
                 input.input-xlarge(type="text" placeholder="e.g. recursion")
                 button.btn(type="submit")
                     | Search
+        canvas#canvas
 
 
   
-
+    script(src='/socket.io/socket.io.js')
     script(src='/js/jquery-1.9.1.min.js')
+    script(src='js/arbor.js')
+    script(src='js/arbor-tween.js')
+    script(src='js/arbor-graphics.js')
     script(src='/js/main.js')
+    
+
