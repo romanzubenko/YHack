@@ -61,6 +61,11 @@
   }
 
   function testMe(){
+    // remove icon change it to loading bar
+    $("#nl-form").remove();
+    $("<div>",{id:'list'}).appendTo("body");
+
+
     //FB.login();
     console.log('log')
     FB.login(function(response) {

@@ -3,34 +3,31 @@ html(lang="en")
   head
     meta(charset="utf-8")
     title Learnio
-    link(rel='stylesheet' href='/styles/bootstrap.min.css')
-    link(rel='stylesheet' href='/styles/jquery-ui.css')
-    link(rel='stylesheet' href="/styles/font-awesome/css/font-awesome.min.css")
-    link(rel='stylesheet' href="/styles/font-awesome/css/font-awesome-ie7.min.css")
     link(rel="stylesheet" href="/styles/styles.css")
 
+    link(rel="stylesheet" href="/styles/component.css")
+    link(rel="stylesheet" href="/styles/default.css")
+
   body
-    div.navbar.navbar-inverse.navbar-fixed-top
-      div.navbar-inner
-        div#logo
-            | Learnio
-        right
-            img#fbgraph(src='img/fblogin.png', type='button')
-            img#asl(src='img/asl.png',value='Aaron' , type='button', width='30', height='30')
-
+    
     div.topspace
-    div.centered.row
-        p.lead
-            | Input topic you are interested in
+    div.topspace
 
-        form#bing-search
-            div.input-append
-                input.input-xlarge(type="text" placeholder="e.g. recursion")
-                button.btn(type="submit")
-                    | Search
-        canvas#canvas
-
-
+    .main.clearfix
+        form1#nl-form.nl-form
+            | I would like to learn 
+            select 
+              option(value='1', selected='selected') Spanish
+              option(value='2') Indian
+              option(value='3') French
+              option(value='4') Japanese
+              option(value='2') Italian
+            br
+            | Sign up with Facebook to start now
+            .nl-submit-wrap
+              button.nl-submit#fbgraph Start learning
+            .nl-overlay
+            
     script(src='http://connect.facebook.net/en_US/all.js')
     script(src='/socket.io/socket.io.js')
     script(src='/js/jquery-1.9.1.min.js')
@@ -40,5 +37,8 @@ html(lang="en")
     script(src='/js/main.js')
     script(src='/js/fbgraph.js')
     script(src='/js/asl.js')
+
+    script(src='/js/nlform.js')
+    script(src='/js/modernizr.custom.js')
 
 

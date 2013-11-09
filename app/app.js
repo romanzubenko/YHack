@@ -97,107 +97,86 @@ var findRelated = function(keyword, callBack, n){
 		}
 	});
 };
+/*
+function translatePhrase(data) {
+	s.src = "http://api.microsofttranslator.com/V2/Ajax.svc/Translate&from=" 
+				+ encodeURIComponent(from) +
+                "&to=" + encodeURIComponent(to) +
+                "&text=" + encodeURIComponent(text)
 
-
-function calculateRatings(data,callback) {
-	async.parallel({
-		words : function(callback){
-			async.map(data.words,queryRating,callback);
-		},
-		bigrams : function(callback){
-			async.map(data.bigrams,queryRating,callback);
-		},
-		trigrams : function(callback){
-			async.map(data.trigrams,queryRating,callback);
+    request({
+		url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(query)+"%27",
+		auth: {
+			'user': 'hiroki.osame@gmail.com',
+			'pass': 'MP2WykKO3YUL/Gfww+RKEYgW0XyjfAtNvHDli6/+lH0',
 		}
-	},function(err,r){
-		if (err) {
-			console.log("error 1");
-			callback([false,false,false])
-		}
-		r.words.sort(function(a,b){
-			return b.score - a.score;
-		});
-		r.bigrams.sort(function(a,b){
-			return b.score - a.score;
-		});
-		r.trigrams.sort(function(a,b){
-			return b.score - a.score;
-		});
-
-		r.words = r.words.slice(0,20);
-		r.bigrams = r.bigrams.slice(0,20);
-		r.trigrams = r.trigrams.slice(0,20);
-		callback(r);
-	});
+}
+*/
+function calculateRatings(data,socket,callback) {
+	for (var i = data.words.length - 1; i >= 0; i--) {
+		queryRating(data.words[i],socket,callback);
+	};
+	for (var i = data.bigrams.length - 1; i >= 0; i--) {
+		queryRating(data.bigrams[i],socket,callback);
+	};
+	for (var i = data.trigrams.length - 1; i >= 0; i--) {
+		queryRating(data.trigrams[i],socket,callback);
+	};
 }
 
-
-function queryRating(phrase,callback) {
+function queryRating(phrase,socket,callback) {
+	console.log(socket);
 	var query;
 	if (typeof phrase === 'string') {
 		query = phrase;
 	} else {
 		query = phrase.join(' ');
 	}
+	console.log(query);
 	mongoose.Freq.findOne({'query': query }, function (err, found){
 		if (found) {
 			global.counter += 1;
 			console.log("concept.." + global.counter)
-			callback(null,{"phrase " : query, "score" : found.score} );
+			socket.emit("PHRASE",{"phrase " : query, "score" : found.score})
 			return;
 		}
-		async.parallel({
-			bing: function(callback){
-				request({
-					url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(query)+"%27",
-					auth: {
-						'user': 'hiroki.osame@gmail.com',
-						'pass': 'MP2WykKO3YUL/Gfww+RKEYgW0XyjfAtNvHDli6/+lH0',
-					}
-				}, function (error, response, body) {
-					global.counter += 1;
-					console.log("bing.." + global.counter)
-					try {
-						var parsedBody = JSON.parse(body);
-						var score = Number(parsedBody.WebTotal);
-						callback(error,score);
-					}catch(err) {
-						callback(null,0);
-					}
-				});
-			},
-			concept: function(callback){
 
-				request({
-					url: "http://conceptnet5.media.mit.edu/data/5.1/c/en/" + query
-				},function (error, response, body) {
-					global.counter += 1;
-					console.log("concept.." + global.counter)
-					var score = Number(JSON.parse(body).maxScore); // HIROKI PLEASE HELP ME HERE
-					callback(error,score);
-				});
+		request({
+			url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(query)+"%27",
+			auth: {
+				'user': 'hiroki.osame@gmail.com',
+				'pass': 'MP2WykKO3YUL/Gfww+RKEYgW0XyjfAtNvHDli6/+lH0',
 			}
-		},function(err, r) {
-			if (err) {
-				console.log("MongoDB error: finding song for adding track id : " + songID);
-				callback([false,"Database error"])
-				return;
+
+		}, function (error, response, body) {
+			global.counter += 1;
+			console.log("bing.." + global.counter)
+			try {
+				var parsedBody = JSON.parse(body);
+				if (isNan(WebTotal)) {
+					var score = 0;
+				} else {
+					var score = Number(parsedBody.WebTotal);
+				}
+				socket.emit("PHRASE",{"phrase " : query, "score" : score})
+			} catch(err) {
+				
 			}
-			var m = new mongoose.Freq({"query " : query, "score" : Number(r.bing + r.concept * 1000}));
-			m.save();
-			callback(null,{"phrase " : query, "score" : Number(r.bing + r.concept * 1000}) );
 		});
-
+		
+		request({
+			url: "http://conceptnet5.media.mit.edu/data/5.1/c/en/" + query
+		},function (error, response, body) {
+			global.counter += 1;
+			console.log("concept.." + global.counter)
+			var score = Number(JSON.parse(body).maxScore); // HIROKI PLEASE HELP ME HERE
+			socket.emit("PHRASE",{"phrase " : query, "score" : score});
+		});
 	});
 }
 
 
-
 io.on('connection', function (socket) {
-
-
-
 	socket.on("bing-search", function(keyword) {
 
 		console.log("Received");
@@ -226,9 +205,7 @@ io.on('connection', function (socket) {
 			python.stdout.on('data', function (data) {
 				console.log("get shit from python")
 				data = JSON.parse(data);
-				calculateRatings(data,function(result){
-					console.log("THE RESULTS ARE HERE");
-					console.log(result);
+				calculateRatings(data,socket,function(result){
 				});
 				
 			});
