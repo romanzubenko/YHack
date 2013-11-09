@@ -207,7 +207,7 @@ io.on('connection', function (socket) {
 				data = JSON.parse(data);
 				calculateRatings(data,socket,function(result){
 				});
-				
+
 			});
 		});
 	});
@@ -233,7 +233,4 @@ app.get('/asl', function(req, res){
 		data : data,
 	});
 });
-
-
-
 
