@@ -7,13 +7,9 @@ var express = require('express'),
 
 	secretCookie = 'mongolia',
 	cookieParser = express.cookieParser(secretCookie),
-<<<<<<< HEAD
+
 	server, io, schemaLG, helper;
 	
-=======
-	server,io,schemaLG,helper;
-
->>>>>>> 5cd0909cec5f1467d1e4d1b0c51d041080343aa5
 
 
 app.configure(function() {
