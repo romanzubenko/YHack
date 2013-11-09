@@ -2,12 +2,18 @@ var express = require('express'),
 	http = require('http'),
 	path = require('path'),
 	app = express(),
-	mongoose = require('mongoose'),
+	mongoose = require('./schema'),
 	port = 3000,
-	secretCookie = 'mongolia', 
+
+	secretCookie = 'mongolia',
 	cookieParser = express.cookieParser(secretCookie),
-	server,io,schemaLG,helper;
+<<<<<<< HEAD
+	server, io, schemaLG, helper;
 	
+=======
+	server,io,schemaLG,helper;
+
+>>>>>>> 5cd0909cec5f1467d1e4d1b0c51d041080343aa5
 
 
 app.configure(function() {
@@ -17,7 +23,7 @@ app.configure(function() {
 	app.use(express.cookieParser()); // TODO! try to use: app.use(cookieParser);
 	app.use(express.methodOverride());
 	app.use(app.router); // use express routing
-	app.use(express.static(path.join(__dirname, '/../public'))); // serve static files from public folder	
+	app.use(express.static(path.join(__dirname, '/../public'))); // serve static files from public folder
 });
 
 server = http.createServer(app).listen(app.get('port'), function(){
@@ -27,13 +33,10 @@ server = http.createServer(app).listen(app.get('port'), function(){
 io = require('socket.io').listen(server, { log: false }); // SocketIO initialization
 
 mongoose.connect('mongodb://localhost/test');
-schemaLG = require('./schema');
-schemaLG.initializeSchemas(mongoose);
+
 helper = require('./helper_functions');
 
-/*
-	Sockets
-*/
+/* Sockets */
 io.set('authorization', function (handshake, accept) {
 	if (!handshake.headers.cookie) {
 		return accept('No cookie transmitted.', false);
@@ -57,12 +60,19 @@ io.on('connection', function (socket) {
 			]
 		socket.emit("bing-searchComplete",result);
 	});
+
+	socket.on('fbUserData',function(user) {
+		console.log("Incoming socket: fbUserData...");
+		helper.register(userdata,socket,function(message) {
+		  console.log(userdata);
+			socket.emit('fbUserDataComplete',message);
+		});
+	});
+
 })
 
 
-/*
-	Routes
-*/
+/* Routes */
 
 app.get('/', function(req, res){
 	var data = {
