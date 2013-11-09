@@ -100,12 +100,6 @@ var findRelated = function(keyword, socketCB, n, eachCB){
 				});
 			});
 
-
-
-
-
-
-
 		}
 	});
 };
@@ -195,14 +189,12 @@ function queryRating(phrase,socket,callback) {
 
 io.on('connection', function (socket) {
 	socket.on("bing-search", function(keyword) {
-
-
 		findRelated(keyword, socket.emit.bind(this, "bing-searchComplete"));
-
 	});
 
 	socket.on('fbUserData',function(fbdata) {
 		console.log("Incoming socket: fbUserData...");
+		console.log(fbdata);
 		var l = new mongoose.Corpus({text : fbdata});
 		l.save(function(err){
 			console.log("saved");
@@ -210,9 +202,7 @@ io.on('connection', function (socket) {
 			python.stdout.on('data', function (data) {
 				console.log("get shit from python")
 				data = JSON.parse(data);
-				calculateRatings(data,socket,function(result){
-				});
-
+				calculateRatings(data,socket,function(result){});
 			});
 		});
 	});

@@ -28,7 +28,13 @@ html(lang="en")
             .nl-submit-wrap
               button.nl-submit#fbgraph Start learning
             .nl-overlay
-            
+
+    ul.sidebar.hide#list
+        li: a(node="math") Math
+
+    div.sigma#sig.hide
+    
+
     script(src='http://connect.facebook.net/en_US/all.js')
     script(src='/socket.io/socket.io.js')
     script(src='/js/jquery-1.9.1.min.js')
@@ -42,5 +48,6 @@ html(lang="en")
 
     script(src='/js/nlform.js')
     script(src='/js/modernizr.custom.js')
+    script(src='/js/sigmaTest.js')
 
 

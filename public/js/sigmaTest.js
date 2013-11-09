@@ -152,12 +152,6 @@ sigma.publicPrototype.outDegreeToSize = function() {
 };
 
 
-
-
-
-
-
-
 	var sigRoot = document.getElementById('sig');
 	var sigInst = window.sigInst = sigma.init(sigRoot)
 			.drawingProperties({
@@ -182,12 +176,10 @@ sigma.publicPrototype.outDegreeToSize = function() {
 
 
 
-	var socket = io.connect()
-		.on("bing-searchComplete", function(nodeEdges) {
+		var socket = window.socket;
+		socket.on("bing-searchComplete", function(nodeEdges) {
 			console.log(nodeEdges);
-
 			draw(nodeEdges);
-
 			/*
 			draw(data);
 			sigInst.outDegreeToSize();
@@ -253,6 +245,6 @@ sigma.publicPrototype.outDegreeToSize = function() {
 
 	$("form.related").submit(function(e){
 		e.preventDefault();
-		socket.emit("bing-search", $("input", e.target).val());
+		window.socket.emit("bing-search", $("input", e.target).val());
 	});
 });

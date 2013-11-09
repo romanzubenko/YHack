@@ -14,40 +14,40 @@ body, html{
 	font-size: 18px;
 }
 
-ul.sidebar{
+ul.sidebar {
 	position: absolute;
 	width: 210px;
-	height: 95%;
-	background-color: rgba(255,255,255,0.3);
+	height: 100%;
+	background-color: rgba(135, 194, 248, 0.09);
 	z-index: 100;
-	margin: 10px 10px;
-	border-radius: 5px;
+	margin: auto;
 	overflow: scroll;
-
-	padding: 10px 0;
-
+	padding: 0;
 	_text-shadow: 0 1px 0 #fff;
-
 	list-style: none;
-}
+	}
 
-ul.sidebar li{
+ul.sidebar li {
 	position: relative;
 	display: block;
-
+	height: 42px;
+	margin: 0;
+	border-top: 1px solid #263D49;
+	border-bottom: 1px solid #465668;
 }
 
-ul.sidebar li a{
+ul.sidebar li a {
 	display: block;
-	_color: #716b7a;
-	padding: 5px 20px;
+	color: #BDC1CA;
+	padding: 10px 20px;
 	cursor: pointer;
+	height: 42px;
+	background: rgba(236, 236, 236, 0.16);
 }
 
 ul.sidebar li a:hover{
 	text-decoration: none;
-	background-color: #e5e3e9;
-	border-right: 1px solid #dbd8e0;
+	background-color:#5A5D61;
 }
 
 .sigma {
@@ -88,4 +88,8 @@ height: 100%;
 .topspace {
 	width: 100%;
 	height: 50px;
+}
+
+.hide {
+	display: none;
 }
