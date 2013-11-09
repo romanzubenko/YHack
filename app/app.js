@@ -101,8 +101,6 @@ var findRelated = function(keyword, callBack, n){
 
 function calculateRatings(data,callback) {
 	async.parallel({
-
-	},function(err,r){
 		words : function(callback){
 			sync.map(data.words,queryRating,callback);
 		},
@@ -111,7 +109,13 @@ function calculateRatings(data,callback) {
 		},
 		trigrams : function(callback){
 			sync.map(data.trigrams,queryRating,callback);
-		},
+		}
+	},function(err,r){
+		if (err) {
+			console.log("error 1");
+			callback([false,false,false])
+		}
+		callback(r)
 	});
 }
 
@@ -173,8 +177,11 @@ io.on('connection', function (socket) {
 			var python = child.spawn('python', ['nlp/freq.py', l._id.toString()]);
 			python.stdout.on('data', function (data) {
 				data = JSON.parse(data);
+				calculateRatings(data,function(result){
+					console.log("I can't believe it ");
+					console.log(result);
+				});
 				
-				data.
 			});
 		});
 	});
