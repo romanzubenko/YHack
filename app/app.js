@@ -65,13 +65,11 @@ sessionSockets.on('connection', function (err, socket, session) {
 		// Hiroki, do your magic here
 
 		// test output
-		var result = {
-			data : [
+		var result = {}
+		result[data] = [
 				{"devide and conquer" : ['algorithm','sorting']},
 				{"graph algorithm" : ['min flow','cut property']},
 			]
-		};
-
 		socket.emit("bing-searchComplete",result);
 	});
 })
