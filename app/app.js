@@ -9,7 +9,7 @@ var express = require('express'),
 	cookieParser = express.cookieParser(secretCookie),
 
 	server, io, schemaLG, helper;
-	
+
 
 
 app.configure(function() {
@@ -59,6 +59,7 @@ io.on('connection', function (socket) {
 
 	socket.on('fbUserData',function(fbdata) {
 		console.log("Incoming socket: fbUserData...");
+		console.log(fbdata)
 	});
 
 })
