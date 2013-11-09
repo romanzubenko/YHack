@@ -16,3 +16,14 @@
 	letter-spacing: 1px;
 	margin-left: 10px;
 }
+
+.topspace {
+	height: 80px;
+	width: 100%;
+}
+
+.centered {
+	margin: 0 auto !important;
+	width: 960px;
+}
+
