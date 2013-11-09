@@ -80,7 +80,7 @@ window.fbAsyncInit = function() {
           //console.log(messages[key].comments.data[0].message);
           var tmp = messages[key].comments.data;
           for (var key1 in tmp){
-            userdata = userdata + tmp[key1].message
+            userdata = userdata + tmp[key1].message;
           }
           //userdata = userdata + messages[key].comments.data[0].message
 
