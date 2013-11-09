@@ -1,5 +1,3 @@
-
-
 $(document).on('click', "a[asl]", function(e){
 
 
@@ -10,7 +8,6 @@ $(document).on('click', "a[asl]", function(e){
 	for(char c : word.toCharArray()) {
 		console.log(c);
 	}
-
 
 })
 
