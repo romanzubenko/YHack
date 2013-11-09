@@ -48,7 +48,7 @@ var findRelated = function(keyword, callBack, n){
 	if( n == null ){ n = 2; }
 	else if( n == 0 ) { return callBack(null, [keyword]); }
 
-		
+
 	mongoose.Related.findOne({ 'keyword': keyword }, function (err, found){
 		if (err ) return console.log("Error", err);
 
@@ -149,4 +149,16 @@ app.get('/', function(req, res){
 		data : data,
 	});
 });
+
+app.get('/asl', function(req, res){
+	var data = {
+		test : "1"
+	}
+	res.render('asl',{
+		data : data,
+	});
+});
+
+
+
 
