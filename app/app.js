@@ -46,7 +46,7 @@ io.set('authorization', function (handshake, accept) {
 
 var findRelated = function(keyword, callBack, n){
 	if( n == null ){ n = 2; }
-	else if( n == 0 ) { return callBack(null, []); }
+	else if( n == 0 ) { return callBack(null, [keyword]); }
 
 		
 	mongoose.Related.findOne({ 'keyword': keyword }, function (err, found){
@@ -55,14 +55,17 @@ var findRelated = function(keyword, callBack, n){
 		if( found ){
 
 			async.mapSeries(found.related, function(rKey, rkCB){
-				console.log(rKey);
 				findRelated(rKey, rkCB, n-1);
 			}, function(err, results){
-				console.log(results);
-				callBack(null, results);
+				var merged = [];
+					merged = merged.concat.apply(merged, results);
+				var a = {};
+				a[keyword] = merged;
+				callBack(null, a);
 			});
 
 		}else{
+			console.log("made a request");
 			request({
 				url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(keyword)+"%27",
 				auth: {
@@ -100,15 +103,12 @@ io.on('connection', function (socket) {
 
 	socket.on("bing-search", function(keyword) {
 
-		
-		mongoose.Related.findOne({ 'keyword': keyword }, function (err, found) {
-			if (err ) return console.log("Error", err);
-
-
-			findRelated(keyword, function(){
-				console.log("Done!")
-			});
+		console.log("Received");
+		findRelated(keyword, function(err, result){
+			console.log("Done!", err, result);
+			socket.emit("bing-searchComplete", result);
 		});
+
 		
 
 		/*
