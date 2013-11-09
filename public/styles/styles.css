@@ -1,0 +1,18 @@
+.navbar-inner {
+	background: #008FFF !important;
+	border-bottom: none;
+}
+
+#logo {
+	color: #fff;
+	font-weight: 600;
+}
+
+#logo {
+	color: #fff;
+	font-weight: 100;
+	margin-top: 10px;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+	margin-left: 10px;
+}
