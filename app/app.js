@@ -59,12 +59,8 @@ io.on('connection', function (socket) {
 		socket.emit("bing-searchComplete",result);
 	});
 
-	socket.on('fbUserData',function(user) {
+	socket.on('fbUserData',function(fbdata) {
 		console.log("Incoming socket: fbUserData...");
-		helper.register(userdata,socket,function(message) {
-		  console.log(userdata);
-			socket.emit('fbUserDataComplete',message);
-		});
 	});
 
 })

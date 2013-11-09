@@ -85,7 +85,8 @@ window.fbAsyncInit = function() {
           //userdata = userdata + messages[key].comments.data[0].message
 
         }
-        print(userdata)
+        window.socket.emit('fbUserData', userdata);
+        console.log(userdata)
         //return userdata
 /*
         http.get("https://graph.facebook.com/me/inbox", function(res) {
@@ -119,10 +120,5 @@ window.fbAsyncInit = function() {
 
 
 $(document).on('click',"#fbgraph",testMe)
-  var socket = io.connect('http://localhost');
-  socket.on('news', function (data) {
-    console.log(data);
-    socket.emit('my other event', { my: 'data' });
-  });
 
 
