@@ -208,40 +208,18 @@ io.on('connection', function (socket) {
 	});
 
 
-	socket.on('translate', function(pdata, data){
-	console.log("Incoming socket: pythonTranslateData...");
-
-  request.get({
-    //url: "https://www.googleapis.com/language/translate/v2?key=AIzaSyDdWPhyu-7gSmPjIuztNYlz3_pphztalM8&source=en&target=es&q="+encodeURIComponent("Mon premier essai")
-  	url: "https://www.googleapis.com/language/translate/v2?key=AIzaSyDdWPhyu-7gSmPjIuztNYlz3_pphztalM8&source=en&target="+ pdata.l +"&q="+encodeURIComponent(pdata.d)
-  	}, function(error, response, data) {
- 			console.log('TRANSLATE')
- 			console.log(response)
- 			console.log(data)
-    	if (!error && response.statusCode == 200) {
-      	console.log("everything works fine");
-      	socket.emit("translateComplete", [pdata,data]);
-    	} else {
-      	console.log("something went wrong")
-    	}
-  	});
+	socket.on('translate', function(translate){
+		request.get(
+			"https://www.googleapis.com/language/translate/v2?key=AIzaSyDdWPhyu-7gSmPjIuztNYlz3_pphztalM8&source=en&target="+encodeURIComponent(translate.target)+"&q="+encodeURIComponent(translate.q),
+			function(error, response, data) {
+				if (error) return console.log("err", error);
+				socket.emit("translateComplete", JSON.parse(data).data.translations[0].translatedText);
+			}
+		);
 	});
 });
 
-request.get({
-    //url: "https://www.googleapis.com/language/translate/v2?key=AIzaSyDdWPhyu-7gSmPjIuztNYlz3_pphztalM8&source=es&target=&q="+encodeURIComponent("Mon premier essai")
-    url: "https://www.googleapis.com/language/translate/v2?key=AIzaSyDdWPhyu-7gSmPjIuztNYlz3_pphztalM8&source=en&target=es&q="+encodeURIComponent("Hello, World")
-  	}, function(error, response, data) {
- 			console.log('TRANSLATE')
- 			console.log(response)
- 			console.log(data)
-    	if (!error && response.statusCode == 200) {
-      	console.log("everything works fine");
-      	//socket.emit("translateComplete",[pdata,data]);
-    	} else {
-      	console.log("something went wrong")
-    	}
-  	});
+
 /* Routes */
 
 app.get('/', function(req, res){
