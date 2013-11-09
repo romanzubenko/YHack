@@ -227,7 +227,7 @@ io.on('connection', function (socket) {
 				console.log("get shit from python")
 				data = JSON.parse(data);
 				calculateRatings(data,function(result){
-					console.log("I can't believe it ");
+					console.log("THE RESULTS ARE HERE");
 					console.log(result);
 				});
 				
