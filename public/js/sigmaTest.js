@@ -176,7 +176,8 @@ sigma.publicPrototype.outDegreeToSize = function() {
 
 
 
-		var socket = window.socket;
+		var socket = window.socket || io.connect();
+		window.socket = socket;
 		socket.on("bing-searchComplete", function(nodeEdges) {
 			console.log(nodeEdges);
 			draw(nodeEdges);

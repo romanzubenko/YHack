@@ -4,7 +4,8 @@
 
 
 	$(document).ready(function(){
-		window.socket = io.connect();
+		var socket = window.socket || io.connect();
+		window.socket = socket;
 
 		window.socket.on("bing-searchComplete",function(data) {
 			console.log("result arrived");
@@ -39,7 +40,7 @@
 
 			window.socket.emit("bing-search",data.phrase);
 
-			var trans {
+			var trans = {
 				target : window.lang,
 				q : data.phrase
 			}
@@ -47,10 +48,10 @@
 
 
 		});
-			window.socket.on("translate_Complete", function(data) {
-				console.log('translate result arived');
-				console.log(data);
-			});
+		window.socket.on("translate_Complete", function(data) {
+			list[data[0]].pointer.html(list[data[0]].pointer.html() + " / " + data[1]);
+		});
+
 
 	});
 
