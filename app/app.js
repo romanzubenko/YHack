@@ -57,12 +57,8 @@ var findRelated = function(keyword, socketCB, n, eachCB){
 			}, function(){
 				if(eachCB) eachCB();
 			});
-			
 		}else{
 
-
-			console.log("made a request");
-			/*
 			request({
 				url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(keyword)+"%27",
 				auth: {
@@ -82,7 +78,14 @@ var findRelated = function(keyword, socketCB, n, eachCB){
 					if( err ) return console.log("Mongoose Error", err, callBack());
 					console.log(n, data);
 
+					socketCB(data);
 
+					async.eachSeries(data.related, function(rKey, rkCB){
+						findRelated(rKey, socketCB, n-1, rkCB);
+					}, function(){
+						if(eachCB) eachCB();
+					});
+					/*
 					async.mapSeries(data.related, function(rKey, rkCB){
 						findRelated(rKey, rkCB, n-1);
 					}, function(err, results){
@@ -92,10 +95,17 @@ var findRelated = function(keyword, socketCB, n, eachCB){
 						a[keyword] = merged;
 						callBack(null, a);
 					});
+*/
 
 				});
 			});
-*/
+
+
+
+
+
+
+
 		}
 	});
 };
