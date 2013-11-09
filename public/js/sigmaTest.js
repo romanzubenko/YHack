@@ -239,7 +239,7 @@ sigma.publicPrototype.outDegreeToSize = function() {
 
 
 	$("video#asl").bind("ended", function(){
-		if( ASLq.length>0 ) nextVideo();
+		if( ASLq.length>0 && $("#myModal:visible").length ) nextVideo();
 	});
 
 
