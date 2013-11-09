@@ -62,8 +62,8 @@ var findRelated = function(keyword, socketCB, n, eachCB){
 			request({
 				url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(keyword)+"%27",
 				auth: {
-					'user': 'hiroki.osame@gmail.com',
-					'pass': 'MP2WykKO3YUL/Gfww+RKEYgW0XyjfAtNvHDli6/+lH0',
+					'user': 'romanzubenko@hotmail.com',
+					'pass': 'wT2i3TGfdUarg+NDwPoXtCh/d2QeDltuHAYqIvDdFZE',
 				}
 
 			}, function (error, response, body) {
