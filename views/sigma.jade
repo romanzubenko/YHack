@@ -1,0 +1,26 @@
+doctype 5
+html(lang="en")
+	head
+		meta(charset="utf-8")
+		title Learnio
+		link(rel="stylesheet" href="/styles/bootstrap.min.css")
+		link(rel="stylesheet" href="/styles/bootstrap-theme.min.css")
+		link(rel="stylesheet" href="/styles/styles.css")
+
+	body
+
+		ul.sidebar
+			li
+				form.related
+					input(type='text')
+			li: a(node="math") Math
+
+
+		div.sigma#sig
+
+
+	script(src='/socket.io/socket.io.js')
+	script(src='/js/jquery-1.9.1.min.js')
+	script(src='/js/bootstrap.min.js')
+	script(src='/js/sigma.min.js')
+	script(src='/js/sigmaTest.js')

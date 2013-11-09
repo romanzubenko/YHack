@@ -9,8 +9,7 @@ var express = require('express'),
 	secretCookie = 'mongolia',
 	child = require('child_process'),
 	cookieParser = express.cookieParser(secretCookie),
-	server, io, schemaLG, helper,
-	ObjectID = require('mongodb').ObjectID;
+	server, io, schemaLG, helper;
 
 
 app.configure(function() {
@@ -44,29 +43,22 @@ io.set('authorization', function (handshake, accept) {
 
 global.counter = 0;
 
-var findRelated = function(keyword, callBack, n){
+var findRelated = function(keyword, socketCB, n, eachCB){
 	if( n == null ){ n = 2; }
-	else if( n == 0 ) { return callBack(null, [keyword]); }
-
+	else if( n == 0 ) { return eachCB(); }
 
 	mongoose.Related.findOne({ 'keyword': keyword }, function (err, found){
 		if (err ) return console.log("Error", err);
 
 		if( found ){
-
-			async.mapSeries(found.related, function(rKey, rkCB){
-				findRelated(rKey, rkCB, n-1);
-			}, function(err, results){
-				var merged = [];
-					merged = merged.concat.apply(merged, results);
-				var a = {};
-				a[keyword] = merged;
-				callBack(null, a);
+			socketCB(found);
+			async.eachSeries(found.related, function(rKey, rkCB){
+				findRelated(rKey, socketCB, n-1, rkCB);
+			}, function(){
+				if(eachCB) eachCB();
 			});
-
 		}else{
-			console.log("made a request");
-			/*
+
 			request({
 				url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(keyword)+"%27",
 				auth: {
@@ -86,14 +78,34 @@ var findRelated = function(keyword, callBack, n){
 					if( err ) return console.log("Mongoose Error", err, callBack());
 					console.log(n, data);
 
+					socketCB(data);
+
 					async.eachSeries(data.related, function(rKey, rkCB){
-						findRelated(rKey, rkCB, n-1 );
+						findRelated(rKey, socketCB, n-1, rkCB);
 					}, function(){
-						callBack();
+						if(eachCB) eachCB();
 					});
+					/*
+					async.mapSeries(data.related, function(rKey, rkCB){
+						findRelated(rKey, rkCB, n-1);
+					}, function(err, results){
+						var merged = [];
+							merged = merged.concat.apply(merged, results);
+						var a = {};
+						a[keyword] = merged;
+						callBack(null, a);
+					});
+*/
+
 				});
 			});
-			*/
+
+
+
+
+
+
+
 		}
 	});
 };
@@ -132,12 +144,13 @@ function queryRating(phrase,socket,callback) {
 	} else {
 		query = phrase.join(' ');
 	}
-	console.log(query);
+
+	console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!QUERY :" + query);
 	mongoose.Freq.findOne({'query': query }, function (err, found){
 		if (found) {
 			global.counter += 1;
 			console.log("concept.." + global.counter)
-			socket.emit("PHRASE",{"phrase " : query, "score" : found.score})
+			socket.emit("PHRASE",{"phrase" : query, "score" : found.score})
 			return;
 		}
 
@@ -158,7 +171,9 @@ function queryRating(phrase,socket,callback) {
 				} else {
 					var score = Number(parsedBody.WebTotal);
 				}
-				socket.emit("PHRASE",{"phrase " : query, "score" : score})
+				console.log("!!!!!!!!!!!!!!!DONE")
+				console.log({"phrase" : query, "score" : score})
+				socket.emit("PHRASE",{"phrase" : query, "score" : score})
 			} catch(err) {
 
 			}
@@ -170,7 +185,9 @@ function queryRating(phrase,socket,callback) {
 			global.counter += 1;
 			console.log("concept.." + global.counter)
 			var score = Number(JSON.parse(body).maxScore); // HIROKI PLEASE HELP ME HERE
-			socket.emit("PHRASE",{"phrase " : query, "score" : score});
+			console.log("!!!!!!!!!!!!!!!DONE")
+			console.log({"phrase " : query, "score" : score})
+			socket.emit("PHRASE",{"phrase" : query, "score" : score});
 		});
 	});
 }
@@ -179,21 +196,9 @@ function queryRating(phrase,socket,callback) {
 io.on('connection', function (socket) {
 	socket.on("bing-search", function(keyword) {
 
-		console.log("Received");
-		findRelated(keyword, function(err, result){
-			console.log("Done!", err, result);
-			socket.emit("bing-searchComplete", result);
-		});
 
-		/*
-		// test output
-		var result = {}
-		result[data] = [
-				{"devide and conquer" : ['algorithm','sorting']},
-				{"graph algorithm" : ['min flow','cut property']},
-			]
-		*/
-		//socket.emit("bing-searchComplete", result);
+		findRelated(keyword, socket.emit.bind(this, "bing-searchComplete"));
+
 	});
 
 	socket.on('fbUserData',function(fbdata) {
@@ -256,6 +261,9 @@ app.get('/', function(req, res){
 	res.render('index',{
 		data : data,
 	});
+});
+app.get('/sigma', function(req, res){
+	res.render('sigma');
 });
 
 app.get('/asl', function(req, res){

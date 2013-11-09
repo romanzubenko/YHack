@@ -1,6 +1,7 @@
-(function(){
+(function(window){
 	'use strict'
 	window.list = {}
+
 
 	$(document).ready(function(){
 		window.socket = io.connect();
@@ -16,26 +17,27 @@
 			showResult(nodes,edges);showResult(nodes,edges);
 		})
 
-		window.socket.on("PHRASE",function(phrase) {
-			if (list[phrase.phrase] == undefined) {
+		window.socket.on("PHRASE",function(data) {
+			console.log(data.phrase)
+			if (list[data.phrase] == undefined) {
 				var WORD = {
 					pointer : null,
-					phrase : phrase.phrase,
-					score : phrase.score
+					phrase : data.phrase,
+					score : data.score
 				}
-				var b = $("<div>",{class: "word",html: phrase.phrase + " score : " + phrase.score}).appendTo("#list");
+				//console.log("WORD")
+				//console.log(WORD)
+				var b = $("<div>",{class: "word",html: WORD.phrase + " score : " + WORD.score}).appendTo("#list");
 				WORD.pointer = b;
 				window.list[WORD] = WORD;
 			} else {
 				var WORD = list[phrase.phrase];
 				WORD.score  = WORD.score + phrase.score;
-				list.WORD.pointer.html(phrase.phrase + " score : " + WORD.score + phrase.score);
+				list.WORD.pointer.html(WORD.phrase + " score : " + (WORD.score + data.score));
 			}
 
-			window.socket.emit("bing-search",phrase.phrase);
+			window.socket.emit("bing-search",data.phrase);
 
-
-			window.socket.emit("translate", 'hello');
 		});
 			window.socket.on("translate_Complete", function(data) {
 				console.log('translate result arived');
