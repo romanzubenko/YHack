@@ -7,17 +7,6 @@
 		var socket = window.socket || io.connect();
 		window.socket = socket;
 
-		window.socket.on("bing-searchComplete",function(data) {
-			console.log("result arrived");
-			console.log(data);
-			var edges = {};
-			var nodes = {};
-			BFS(data,nodes,edges,5,true)
-			console.log(edges);
-			console.log(nodes);
-			showResult(nodes,edges);showResult(nodes,edges);
-		})
-
 		window.socket.on("PHRASE",function(data) {
 			console.log("data.phrase")
 			console.log(data.phrase)
@@ -31,25 +20,30 @@
 				//console.log(WORD)
 				var b = $("<li>",{html: "<a node=\"" +WORD.phrase + " \">" +WORD.phrase +"</a>"}).appendTo("#list");
 				WORD.pointer = b;
-				window.list[WORD] = WORD;
+				window.list[WORD.phrase] = WORD;
 			} else {
 				var WORD = list[phrase.phrase];
 				WORD.score  = WORD.score + phrase.score;
 				list.WORD.pointer.html(WORD.phrase + " score : " + (WORD.score + data.score));
 			}
 
-			window.socket.emit("bing-search",data.phrase);
+			if (data.phrase.split(" ").length > 2) {
+				window.socket.emit("bing-search",data.phrase);
+			}
 
 			var trans = {
 				target : window.lang,
 				q : data.phrase
 			}
-			window.socket.emit("translate",data.phrase);
+			window.socket.emit("translate",trans);
 
 
 		});
-		window.socket.on("translate_Complete", function(data) {
-			list[data[0]].pointer.html(list[data[0]].pointer.html() + " / " + data[1]);
+		window.socket.on("translateComplete", function(data) {
+			console.log(data[0])
+			console.log(window.list)
+			
+			window.list[data[0]].pointer.append("<a class=\"translation\">Translation : " + data[1] +"</a>");
 		});
 
 

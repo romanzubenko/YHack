@@ -13,7 +13,7 @@ data = corpusObj[u'text']
 
 tokens = nltk.word_tokenize(data)
 
-tokens = [token for token in tokens if token not in ['var',',','.','(',')',';',';','\'','\"','!','@','&','?','=','>',"<"] and ".com" not in token and "http" not in token and "www" not in token ]
+tokens = [token for token in tokens if token not in ['var',',','.','(',')',';',':','\'','\"','!','@','&','?','=','>',"<"] and ".com" not in token and "http" not in token and "www" not in token ]
 text = nltk.Text(tokens)
 
 bis = nltk.bigrams(tokens)
@@ -31,9 +31,9 @@ vocab3 = freqs3.keys()
 # EXPORTING TO PYMONGO
 numberD = 10 # number of top scorers to check
 xxx = {
-	"words" : vocab1[:numberD],
-	"bigrams" : vocab2[:numberD],
-	"trigrams" : vocab3[:numberD]
+	"words" : vocab1[:5],
+	"bigrams" : vocab2[:15],
+	"trigrams" : vocab3[:20]
 }
 
 print(json.dumps(xxx))
