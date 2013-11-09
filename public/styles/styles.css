@@ -91,6 +91,7 @@ height: 100%;
 }
 
 .hide {
+	visibility: hidden;
 	display: none;
 }
 

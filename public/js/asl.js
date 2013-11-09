@@ -11,7 +11,7 @@ videoPlayer = document.getElementById("homevideo");
 function run(){
         word_loc++;
         alphLoc = getLetterIndex(word_loc);
-        if (word_loc == name.length - 1) window.location = "http://localhost:3000";
+        if (word_loc == name.length) window.location = "http://localhost:3000";
         var nextVideo = "video/"+alp[alphLoc]+".mp4";
         videoPlayer.src = nextVideo;
         videoPlayer.play();
