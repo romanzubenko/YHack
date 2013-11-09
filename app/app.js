@@ -4,7 +4,8 @@ var express = require('express'),
 	app = express(),
 	mongoose = require('./schema'),
 	port = 3000,
-
+	async = require('async'),
+	request = require('request'),
 	secretCookie = 'mongolia',
 	cookieParser = express.cookieParser(secretCookie),
 
@@ -28,7 +29,7 @@ server = http.createServer(app).listen(app.get('port'), function(){
 
 io = require('socket.io').listen(server, { log: false }); // SocketIO initialization
 
-mongoose.connect('mongodb://localhost/test');
+mongoose.connect();
 
 helper = require('./helper_functions');
 
@@ -42,19 +43,83 @@ io.set('authorization', function (handshake, accept) {
 });
 
 
+
+var findRelated = function(keyword, callBack, n){
+	if( n == null ){ n = 2; }
+	else if( n == 0 ) { return callBack(null, []); }
+
+		
+	mongoose.Related.findOne({ 'keyword': keyword }, function (err, found){
+		if (err ) return console.log("Error", err);
+
+		if( found ){
+
+			async.mapSeries(found.related, function(rKey, rkCB){
+				console.log(rKey);
+				findRelated(rKey, rkCB, n-1);
+			}, function(err, results){
+				console.log(results);
+				callBack(null, results);
+			});
+
+		}else{
+			request({
+				url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(keyword)+"%27",
+				auth: {
+					'user': 'hiroki.osame@gmail.com',
+					'pass': 'MP2WykKO3YUL/Gfww+RKEYgW0XyjfAtNvHDli6/+lH0',
+				}
+
+			}, function (error, response, body) {
+				var results = JSON.parse(body).d.results[0].RelatedSearch.map(function(e){
+					return e.Title;
+				});
+
+				new mongoose.Related({
+					keyword: keyword,
+					related: results
+				}).save(function(err, data){
+					if( err ) return console.log("Mongoose Error", err, callBack());
+					console.log(n, data);
+
+					async.eachSeries(data.related, function(rKey, rkCB){
+						findRelated(rKey, rkCB, n-1 );
+					}, function(){
+						callBack();
+					});
+				});
+			});
+		}
+	});
+};
+
+
+
 io.on('connection', function (socket) {
 
 
-	socket.on("bing-search",function(data) {
-		// Hiroki, do your magic here
+	socket.on("bing-search", function(keyword) {
 
+		
+		mongoose.Related.findOne({ 'keyword': keyword }, function (err, found) {
+			if (err ) return console.log("Error", err);
+
+
+			findRelated(keyword, function(){
+				console.log("Done!")
+			});
+		});
+		
+
+		/*
 		// test output
 		var result = {}
 		result[data] = [
 				{"devide and conquer" : ['algorithm','sorting']},
 				{"graph algorithm" : ['min flow','cut property']},
 			]
-		socket.emit("bing-searchComplete",result);
+		*/
+		//socket.emit("bing-searchComplete", result);
 	});
 
 	socket.on('fbUserData',function(fbdata) {
