@@ -3,7 +3,7 @@ $(document).on('click',"#asl",run)
 name = 'aaRoN';
 name = name.toLowerCase()
 var alphabet =new Array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');
-console.log('alph',alphabet)
+//console.log('alph',alphabet)
 alp = alphabet;
 word_loc = -1;
 videoPlayer = document.getElementById("homevideo");

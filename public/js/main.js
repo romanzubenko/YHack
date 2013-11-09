@@ -33,7 +33,15 @@
 			}
 
 			window.socket.emit("bing-search",phrase.phrase);
+
+
+			window.socket.emit("translate", 'hello');
 		});
+			window.socket.on("translate_Complete", function(data) {
+				console.log('translate result arived');
+				console.log(data);
+			});
+
 	});
 
 
@@ -60,7 +68,7 @@
 			console.log("node")
 			var label = Object.keys(node)[0],
 			child;
-			
+
 			nodes[label] = {color:color, shape:"dot", alpha:1,link:'http://www.bing.com/search?q=' + label, mass : mass};
 			top = false;
 			edges[label] = {};
@@ -69,7 +77,7 @@
 				edges[label][child] = {length: 0.01}
 			};
 			return label;
-			
+
 		} else { // if it is leaf
 			var leaf = node;
 			nodes[leaf] = {color:color, shape:"dot", alpha:1,link:'http://www.bing.com/search?q=' + leaf};
