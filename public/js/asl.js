@@ -1,7 +1,6 @@
-$(document).on('click', "a[asl]", function(e){
+$(document).on("click", "a[asl]", function(e){
 
-
-
+	console.log("SHIT");
 	var queue = [];
 
 	var word = $(e.target).attr("asl").replace(/\W/g, '').toLowerCase();
@@ -9,7 +8,7 @@ $(document).on('click', "a[asl]", function(e){
 		console.log(c);
 	}
 
-})
+});
 
 name = name.toLowerCase()
 var alphabet = new Array('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z');

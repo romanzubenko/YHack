@@ -235,6 +235,22 @@ sigma.publicPrototype.outDegreeToSize = function() {
 	}
 	*/
 
+	var ASLq = [];
+
+
+	$("video#asl").bind("ended", function(){
+		if( ASLq.length>0 ) nextVideo();
+	});
+
+
+	function nextVideo(){
+
+		$('#myModal').modal("show");
+		var video = $("video#asl");
+		video.attr("src", ASLq.shift())[0].load()
+		video[0].play();
+		
+	}
 
 	$(document)
 	.on("mouseover", "a[node]", function(e){
@@ -242,10 +258,23 @@ sigma.publicPrototype.outDegreeToSize = function() {
 	})
 	.on("mouseout", "a[node]", function(e){
 		sigInst.refresh();
+	})
+
+	.on("click", "a[asl]", function(e){
+
+		var word = $(e.target).attr("asl").replace(/\W/g, '').toLowerCase();
+
+		for ( var i = 0; i < word.length; i++ ){
+			ASLq.push(document.URL+"video/"+word[i]+".mp4");
+		}
+		nextVideo();
 	});
+
 
 	$("form.related").submit(function(e){
 		e.preventDefault();
 		window.socket.emit("bing-search", $("input", e.target).val());
 	});
+
+
 });

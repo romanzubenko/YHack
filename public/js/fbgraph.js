@@ -64,6 +64,7 @@
     // remove icon change it to loading bar
     window.lang = $($("#nl-form").find("select")).val();
 
+    console.log("Hello");
     $("#nl-form").remove();
     $("#sig").show().removeClass('hide');
     $("#sig").css("visibility","visible").removeClass('hide');
