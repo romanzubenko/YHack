@@ -18,7 +18,7 @@
 				}
 				//console.log("WORD")
 				//console.log(WORD)
-				var b = $("<li>",{html: "<a node=\"" +WORD.phrase + " \">" +WORD.phrase +"</a><a asl=\"" +WORD.phrase + " \">" +WORD.phrase[1] +"</a>"}).appendTo("#list");
+				var b = $("<li>",{html: "<a class=\"node\" node=\"" +WORD.phrase + " \">" +WORD.phrase +"</a><a class=\"asl\" asl=\"" +WORD.phrase + " \">ASL</a>"}).appendTo("#list");
 				WORD.pointer = b;
 				window.list[WORD.phrase] = WORD;
 			} else {

@@ -65,14 +65,10 @@
     window.lang = $($("#nl-form").find("select")).val();
 
     $("#nl-form").remove();
-    $("#sig").show();
-    $("#sig").css("visibility","visible");
-    $("#list").show().css("visibility","visible");
+    $("#sig").show().removeClass('hide');
+    $("#sig").css("visibility","visible").removeClass('hide');
+    $("#list").show().css("visibility","visible").removeClass('hide');
     $(".topspace, .main").hide(200);
-
-
-
-
 
     //FB.login();
     console.log('log')
