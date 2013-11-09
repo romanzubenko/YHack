@@ -7,10 +7,10 @@ var express = require('express'),
 	async = require('async'),
 	request = require('request'),
 	secretCookie = 'mongolia',
+	child = require('child_process'),
 	cookieParser = express.cookieParser(secretCookie),
-
-	server, io, schemaLG, helper;
-
+	server, io, schemaLG, helper,
+	ObjectID = require('mongodb').ObjectID;
 
 
 app.configure(function() {
@@ -103,6 +103,7 @@ var findRelated = function(keyword, callBack, n){
 io.on('connection', function (socket) {
 
 
+
 	socket.on("bing-search", function(keyword) {
 
 		console.log("Received");
@@ -110,8 +111,6 @@ io.on('connection', function (socket) {
 			console.log("Done!", err, result);
 			socket.emit("bing-searchComplete", result);
 		});
-
-		
 
 		/*
 		// test output
@@ -126,10 +125,18 @@ io.on('connection', function (socket) {
 
 	socket.on('fbUserData',function(fbdata) {
 		console.log("Incoming socket: fbUserData...");
-		console.log(fbdata)
+		console.log(fbdata);
+		var l = new mongoose.Corpus({text : fbdata});
+		l.save(function(err){
+			console.log("saved");
+			var python = child.spawn('python', ['nlp/freq.py', l._id.toString()]);
+			python.stdout.on('data', function (data) {
+				JSON.parse(data);
+				console.log(data.toString());
+			});
+		});
 	});
-
-})
+});
 
 
 /* Routes */

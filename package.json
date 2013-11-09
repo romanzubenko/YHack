@@ -24,6 +24,7 @@
     "async" : "*",
     "request" : "*",
     "validator" : "*",
-    "jade" : "*"
+    "jade" : "*",
+    "mongodb" : "*"
   }
 }
