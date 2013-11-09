@@ -218,6 +218,17 @@ io.on('connection', function (socket) {
 	});
 });
 
+request.get(
+	"https://www.googleapis.com/language/translate/v2?key=AIzaSyDdWPhyu-7gSmPjIuztNYlz3_pphztalM8&source=en&target="+encodeURIComponent("es")+"&q="+encodeURIComponent(":"),
+	function(error, response, data) {
+		if (error) return console.log("err", error);
+
+		console.log(JSON.parse(data).data.translations[0].translatedText);
+		//socket.emit("translateComplete", [translate.q, JSON.parse(data).data.translations[0].translatedText]);
+	}
+);
+
+
 
 /* Routes */
 
