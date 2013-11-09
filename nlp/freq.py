@@ -28,24 +28,12 @@ vocab1 = freqs1.keys()
 vocab2 = freqs2.keys()
 vocab3 = freqs3.keys()
 
-'''
-print(vocab1[:100])
-print("\n\n\n")
-print(vocab2[:100])
-print("\n\n\n")
-print(vocab3[:100])
-print("\n\n\n")
-print(text.generate())
-print("\n\n\n")
-'''
-
-
 # EXPORTING TO PYMONGO
-
+number = 10 # number of top scorers to check
 xxx = {
-	"words" : vocab1[:80],
-	"bigrams" : vocab2[:80],
-	"trigrams" : vocab3[:80]
+	"words" : vocab1[:number],
+	"bigrams" : vocab2[:number],
+	"trigrams" : vocab3[:number]
 }
 
 print(json.dumps(xxx))

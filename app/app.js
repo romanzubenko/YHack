@@ -140,44 +140,55 @@ function queryRating(phrase,callback) {
 	} else {
 		query = phrase.join(' ');
 	}
-	async.parallel({
-		bing: function(callback){
-			request({
-				url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(query)+"%27",
-				auth: {
-					'user': 'hiroki.osame@gmail.com',
-					'pass': 'MP2WykKO3YUL/Gfww+RKEYgW0XyjfAtNvHDli6/+lH0',
-				}
-			}, function (error, response, body) {
-				global.counter += 1;
-				console.log("bing.." + global.counter)
-				try {
-					var parsedBody = JSON.parse(body);
-					var score = Number(parsedBody.WebTotal);
-					callback(error,score);
-				}catch(err) {
-					callback(null,0);
-				}
-			});
-		},
-		concept: function(callback){
-
-			request({
-				url: "http://conceptnet5.media.mit.edu/data/5.1/c/en/" + query
-			},function (error, response, body) {
-				global.counter += 1;
-				console.log("concept.." + global.counter)
-				var score = Number(JSON.parse(body).maxScore); // HIROKI PLEASE HELP ME HERE
-				callback(error,score);
-			});
-		}
-	},function(err, r) {
-		if (err) {
-			console.log("MongoDB error: finding song for adding track id : " + songID);
-			callback([false,"Database error"])
+	mongoose.Freq.findOne({'query': query }, function (err, found){
+		if (found) {
+			global.counter += 1;
+			console.log("concept.." + global.counter)
+			callback(null,{"phrase " : query, "score" : found.score} );
 			return;
 		}
-		callback(null,{"phrase " : query, "score" : r.bing + r.concept * 1000} );
+		async.parallel({
+			bing: function(callback){
+				request({
+					url: "https://api.datamarket.azure.com/Bing/Search/v1/Composite?$format=JSON&Sources=%27RelatedSearch%27&Query=%27"+encodeURIComponent(query)+"%27",
+					auth: {
+						'user': 'hiroki.osame@gmail.com',
+						'pass': 'MP2WykKO3YUL/Gfww+RKEYgW0XyjfAtNvHDli6/+lH0',
+					}
+				}, function (error, response, body) {
+					global.counter += 1;
+					console.log("bing.." + global.counter)
+					try {
+						var parsedBody = JSON.parse(body);
+						var score = Number(parsedBody.WebTotal);
+						callback(error,score);
+					}catch(err) {
+						callback(null,0);
+					}
+				});
+			},
+			concept: function(callback){
+
+				request({
+					url: "http://conceptnet5.media.mit.edu/data/5.1/c/en/" + query
+				},function (error, response, body) {
+					global.counter += 1;
+					console.log("concept.." + global.counter)
+					var score = Number(JSON.parse(body).maxScore); // HIROKI PLEASE HELP ME HERE
+					callback(error,score);
+				});
+			}
+		},function(err, r) {
+			if (err) {
+				console.log("MongoDB error: finding song for adding track id : " + songID);
+				callback([false,"Database error"])
+				return;
+			}
+			var m = new mongoose.Freq({"query " : query, "score" : Number(r.bing + r.concept * 1000}));
+			m.save();
+			callback(null,{"phrase " : query, "score" : Number(r.bing + r.concept * 1000}) );
+		});
+
 	});
 }
 

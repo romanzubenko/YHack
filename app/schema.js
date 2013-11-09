@@ -18,10 +18,8 @@ exports.Corpus = mongoose.model('Corpus', {
 
 
 exports.Freq = mongoose.model('Freq', {
-	words : [],
-	bigrams : [],
-	trigrams : [],
-	phrases : []
+	query : String,
+	score : Number
 });
 
 exports.connect = function() {
