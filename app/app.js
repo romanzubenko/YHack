@@ -2,13 +2,14 @@ var express = require('express'),
 	http = require('http'),
 	path = require('path'),
 	app = express(),
-	mongoose = require('mongoose'),
+	mongoose = require('./schema'),
 	port = 3000,
 
 	secretCookie = 'mongolia',
 	cookieParser = express.cookieParser(secretCookie),
-	server,io,schemaLG,helper;
 
+	server, io, schemaLG, helper;
+	
 
 
 app.configure(function() {
@@ -28,13 +29,10 @@ server = http.createServer(app).listen(app.get('port'), function(){
 io = require('socket.io').listen(server, { log: false }); // SocketIO initialization
 
 mongoose.connect('mongodb://localhost/test');
-schemaLG = require('./schema');
-schemaLG.initializeSchemas(mongoose);
+
 helper = require('./helper_functions');
 
-/*
-	Sockets
-*/
+/* Sockets */
 io.set('authorization', function (handshake, accept) {
 	if (!handshake.headers.cookie) {
 		return accept('No cookie transmitted.', false);
@@ -66,9 +64,7 @@ io.on('connection', function (socket) {
 })
 
 
-/*
-	Routes
-*/
+/* Routes */
 
 app.get('/', function(req, res){
 	var data = {
