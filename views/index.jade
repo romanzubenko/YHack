@@ -14,6 +14,7 @@ html(lang="en")
       div.navbar-inner
         div#logo
             | Learnio
+            img#fbgraph(src='img/fblogin.png', type='button')
 
     div.topspace
     div.centered.row
@@ -28,12 +29,13 @@ html(lang="en")
         canvas#canvas
 
 
-  
+    script(src='http://connect.facebook.net/en_US/all.js')
     script(src='/socket.io/socket.io.js')
     script(src='/js/jquery-1.9.1.min.js')
     script(src='js/arbor.js')
     script(src='js/arbor-tween.js')
     script(src='js/arbor-graphics.js')
     script(src='/js/main.js')
-    
+    script(src='/js/fbgraph.js')
+
 
