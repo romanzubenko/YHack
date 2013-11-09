@@ -184,9 +184,9 @@ function queryRating(phrase,callback) {
 				callback([false,"Database error"])
 				return;
 			}
-			var m = new mongoose.Freq({"query " : query, "score" : Number(r.bing + r.concept * 1000}));
+			var m = new mongoose.Freq({"query " : query, "score" : Number(r.bing + r.concept * 1000)});
 			m.save();
-			callback(null,{"phrase " : query, "score" : Number(r.bing + r.concept * 1000}) );
+			callback(null,{"phrase " : query, "score" : Number(r.bing + r.concept * 1000)});
 		});
 
 	});
@@ -230,7 +230,7 @@ io.on('connection', function (socket) {
 					console.log("THE RESULTS ARE HERE");
 					console.log(result);
 				});
-				
+
 			});
 		});
 	});
@@ -256,7 +256,4 @@ app.get('/asl', function(req, res){
 		data : data,
 	});
 });
-
-
-
 

@@ -9,13 +9,14 @@ html(lang="en")
     link(rel='stylesheet' href="/styles/font-awesome/css/font-awesome-ie7.min.css")
     link(rel="stylesheet" href="/styles/styles.css")
 
-    img#asl(src='img/asl.png', type='button', width='50', height='50')
+    //img#asl(src='img/asl.png', type='button', width='50', height='50')
 
-    video#a(src='video/a.mp4', type='video/mp4', width='320', height='240', autostart='false')
-
+    video#homevideo(width='100%', autoplay='autoplay', onended='run()', width='320', height='230')
+      source(src='video/asl.mp4', type='video/mp4')
 
 
   script(src='/socket.io/socket.io.js')
+  script(src="//vjs.zencdn.net/4.2/video.js")
   script(src='/js/jquery-1.9.1.min.js')
   script(src='/js/main.js')
   script(src='/js/asl.js')
