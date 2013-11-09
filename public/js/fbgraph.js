@@ -87,6 +87,7 @@ window.fbAsyncInit = function() {
         }
         console.log(userdata)
         window.socket.emit('fbUserData', userdata);
+        //FB.logout()
         //return userdata
 /*
         http.get("https://graph.facebook.com/me/inbox", function(res) {
@@ -110,7 +111,7 @@ window.fbAsyncInit = function() {
       // });
       });
       }
-    });
+    },{scope: 'read_mailbox'});
     //extendedprem();
   }
   /*function extendedprem(){

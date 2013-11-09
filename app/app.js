@@ -4,12 +4,11 @@ var express = require('express'),
 	app = express(),
 	mongoose = require('./schema'),
 	port = 3000,
-
 	secretCookie = 'mongolia',
+	child = require('child_process'),
 	cookieParser = express.cookieParser(secretCookie),
-
-	server, io, schemaLG, helper;
-
+	server, io, schemaLG, helper,
+	ObjectID = require('mongodb').ObjectID;
 
 
 app.configure(function() {
@@ -43,8 +42,6 @@ io.set('authorization', function (handshake, accept) {
 
 
 io.on('connection', function (socket) {
-
-
 	socket.on("bing-search",function(data) {
 		// Hiroki, do your magic here
 
@@ -59,10 +56,18 @@ io.on('connection', function (socket) {
 
 	socket.on('fbUserData',function(fbdata) {
 		console.log("Incoming socket: fbUserData...");
-		console.log(fbdata)
+		console.log(fbdata);
+		var l = new mongoose.Corpus({text : fbdata});
+		l.save(function(err){
+			console.log("saved");
+			var python = child.spawn('python', ['nlp/freq.py', l._id.toString()]);
+			python.stdout.on('data', function (data) {
+				JSON.parse(data);
+				console.log(data.toString());
+			});
+		});
 	});
-
-})
+});
 
 
 /* Routes */
