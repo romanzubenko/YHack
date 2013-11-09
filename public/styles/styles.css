@@ -30,7 +30,7 @@ ul.sidebar {
 ul.sidebar li {
 	position: relative;
 	display: block;
-	height: 42px;
+	min-height: 42px;
 	margin: 0;
 	border-top: 1px solid #263D49;
 	border-bottom: 1px solid #465668;
@@ -92,4 +92,10 @@ height: 100%;
 
 .hide {
 	visibility: hidden;
+
+}
+
+.translation {
+	background: #50545E !important;
+	overflow: hidden;
 }

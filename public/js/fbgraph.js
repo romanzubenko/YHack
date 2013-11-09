@@ -66,7 +66,8 @@
 
     $("#nl-form").remove();
     $("#sig").show();
-    $("#list").show();
+    $("#sig").css("visibility","visible");
+    $("#list").show().css("visibility","visible");
     $(".topspace, .main").hide(200);
 
 

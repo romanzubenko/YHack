@@ -22,7 +22,7 @@ app.configure(function() {
 	app.use(express.static(path.join(__dirname, '/../public'))); // serve static files from public folder
 });
 
-server = http.createServer(app).listen(app.get('port'), function(){
+server = http.createServer(app).listen(app.get('port'), function() {
 	console.log("Express server listening on port " + app.get('port'));
 });
 
@@ -75,7 +75,7 @@ var findRelated = function(keyword, socketCB, n, eachCB){
 					keyword: keyword,
 					related: results
 				}).save(function(err, data){
-					if( err ) return console.log("Mongoose Error", err, callBack());
+					if( err ) return console.log("Mongoose Error", err, eachCB());
 					console.log(n, data);
 
 					socketCB(data);
@@ -212,6 +212,9 @@ io.on('connection', function (socket) {
 			"https://www.googleapis.com/language/translate/v2?key=AIzaSyDdWPhyu-7gSmPjIuztNYlz3_pphztalM8&source=en&target="+encodeURIComponent(translate.target)+"&q="+encodeURIComponent(translate.q),
 			function(error, response, data) {
 				if (error) return console.log("err", error);
+				console.log("translated ")
+				console.log(translate)
+				console.log(data);
 				socket.emit("translateComplete", [translate.q, JSON.parse(data).data.translations[0].translatedText]);
 			}
 		);
