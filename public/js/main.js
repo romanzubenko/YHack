@@ -9,7 +9,7 @@
 			console.log(data);
 			var edges = {};
 			var nodes = {};
-			BFS(data,nodes,edges,5)
+			BFS(data,nodes,edges,5,true)
 			console.log(edges);
 			console.log(nodes);
 			showResult(nodes,edges);showResult(nodes,edges);
@@ -30,57 +30,13 @@
 
 
 	function showResult(nodes,edges) {
-		/*
-		var CLR = {
-			branch:"#b2b19d",
-			code:"orange",
-			doc:"#922E00",
-			demo:"#a7af00"
-		}
-		
-		var theUI = {
-			nodes:{"arbor.js":{color:"red", shape:"dot", alpha:1}, 
-			
-						 demos:{color:CLR.branch, shape:"dot", alpha:1}, 
-						 halfviz:{color:CLR.demo, alpha:0, link:'/halfviz'},
-						 atlas:{color:CLR.demo, alpha:0, link:'/atlas'},
-						 echolalia:{color:CLR.demo, alpha:0, link:'/echolalia'},
-
-						 docs:{color:CLR.branch, shape:"dot", alpha:1}, 
-						 reference:{color:CLR.doc, alpha:0, link:'#reference'},
-						 introduction:{color:CLR.doc, alpha:0, link:'#introduction'},
-
-						 code:{color:CLR.branch, shape:"dot", alpha:1},
-						 github:{color:CLR.code, alpha:0, link:'https://github.com/samizdatco/arbor'},
-						 ".zip":{color:CLR.code, alpha:0, link:'/js/dist/arbor-v0.92.zip'},
-						 ".tar.gz":{color:CLR.code, alpha:0, link:'/js/dist/arbor-v0.92.tar.gz'}
-						},
-			edges:{
-				"arbor.js":{
-					demos:{length:.8},
-					docs:{length:.8},
-					code:{length:.8}
-				},
-				demos:{halfviz:{},
-							 atlas:{},
-							 echolalia:{}
-				},
-				docs:{reference:{},
-							introduction:{}
-				},
-				code:{".zip":{},
-							".tar.gz":{},
-							"github":{}
-				}
-			}
-		}*/
 		var theUI = {
 			nodes :nodes,
 			edges : edges
 		}
 
 		var sys = arbor.ParticleSystem()
-		sys.parameters({stiffness:900, repulsion:2000, gravity:true, dt:0.015})
+		sys.parameters({stiffness:100, repulsion:100, gravity:true, dt:0.015})
 		sys.renderer = window.Renderer("#canvas");
 		sys.graft(theUI)
 		
@@ -91,7 +47,7 @@
 	}
 
 
-	function BFS(node,nodes,edges,mass) {
+	function BFS(node,nodes,edges,mass,top) {
 		console.log('BFS received')
 		console.log(node);
 		var CLR = {
@@ -100,22 +56,31 @@
 			doc:"#922E00",
 			demo:"#a7af00"
 		};
-
+		var topcolor = "#228FFF",
+		color;
+		if (top) {
+			color =	topcolor;
+		} else {
+			random(1,3)
+			color = "#77DDFD";
+		}
 		if (!(typeof node === 'string')) { // if it is node
 			console.log("node")
 			var label = Object.keys(node)[0],
 			child;
-			nodes[label] = {color:CLR.branch, shape:"dot", alpha:1,link:'http://bing.com/' + label, mass : mass};
+			
+			nodes[label] = {color:color, shape:"dot", alpha:1,link:'http://www.bing.com/search?q=' + label, mass : mass};
+			top = false;
 			edges[label] = {};
 			for (var i = node[label].length - 1; i >= 0; i--) {
-				child = BFS(node[label][i],nodes,edges,mass - 1); // get all children
-				edges[label][child] = {length: .8}
+				child = BFS(node[label][i],nodes,edges,mass - 1,top); // get all children
+				edges[label][child] = {length: 0.01}
 			};
 			return label;
 			
 		} else { // if it is leaf
 			var leaf = node;
-			nodes[leaf] = {color:CLR.branch, shape:"dot", alpha:1,link:'http://bing.com/' + leaf};
+			nodes[leaf] = {color:color, shape:"dot", alpha:1,link:'http://www.bing.com/search?q=' + leaf};
 			return leaf;
 		}
 	}
