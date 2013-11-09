@@ -113,7 +113,6 @@ function calculateRatings(data,callback) {
 			sync.map(data.trigrams,queryRating,callback);
 		},
 	});
-	a
 }
 
 
