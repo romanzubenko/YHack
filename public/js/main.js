@@ -36,14 +36,15 @@
 		}
 
 		var sys = arbor.ParticleSystem()
-		sys.parameters({stiffness:100, repulsion:100, gravity:true, dt:0.015})
+		sys.parameters({stiffness:100, repulsion:100, gravity:true, dt:0.015});
+		delete sys.renderer;
 		sys.renderer = window.Renderer("#canvas");
-		sys.graft(theUI)
-		
+		sys.graft(theUI);
+		/*
 		var nav = Nav("#nav")
 		$(sys.renderer).bind('navigate', nav.navigate)
 		$(nav).bind('mode', sys.renderer.switchMode)
-		nav.init()
+		nav.init()*/
 	}
 
 
@@ -61,7 +62,6 @@
 		if (top) {
 			color =	topcolor;
 		} else {
-			random(1,3)
 			color = "#77DDFD";
 		}
 		if (!(typeof node === 'string')) { // if it is node
@@ -313,13 +313,9 @@
 						_mouseP = null
 						return false
 					}
-
-
 				}
-
 				$(canvas).mousedown(handler.clicked);
 				$(canvas).mousemove(handler.moved);
-
 			}
 		}
 		
