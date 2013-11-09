@@ -22,6 +22,7 @@
     "socket.io" : "*",
     "session.socket.io": "*",
     "async" : "*",
-    "validator" : "*"
+    "validator" : "*",
+    "jade" : "*"
   }
 }

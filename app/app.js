@@ -4,7 +4,7 @@ var express = require('express'),
 	app = express(),
 	mongoose = require('mongoose'),
 	SessionSockets = require('session.socket.io'),
-	port = 80,
+	port = 3000,
 	secretCookie = 'mongplia', 
 	RedisStore = require('connect-redis')(express),
 	sessionStore = new RedisStore({ttl: 604800}),
@@ -19,7 +19,8 @@ var express = require('express'),
 
 
 app.configure(function() {
-	app.set('port', process.env.PORT || port); // Listening to port 3003, as 80 currently used for apache
+	app.set('port', process.env.PORT || port); // Listening to port 3000
+	app.set('view engine', 'jade');
 	app.use(express.bodyParser()); //
 	app.use(express.cookieParser()); // TODO! try to use: app.use(cookieParser);
 	app.use(express.session({store: sessionStore, secret: secretCookie, key: 'express.sid'})); // glue express and Redis Session Store
