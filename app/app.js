@@ -44,27 +44,24 @@ io.set('authorization', function (handshake, accept) {
 
 
 
-var findRelated = function(keyword, callBack, n){
+var findRelated = function(keyword, socketCB, n, eachCB){
 	if( n == null ){ n = 2; }
-	else if( n == 0 ) { return callBack(null, [keyword]); }
+	else if( n == 0 ) { return eachCB(); }
 
-		
 	mongoose.Related.findOne({ 'keyword': keyword }, function (err, found){
 		if (err ) return console.log("Error", err);
 
 		if( found ){
-
-			async.mapSeries(found.related, function(rKey, rkCB){
-				findRelated(rKey, rkCB, n-1);
-			}, function(err, results){
-				var merged = [];
-					merged = merged.concat.apply(merged, results);
-				var a = {};
-				a[keyword] = merged;
-				callBack(null, a);
+			socketCB(found);
+			async.eachSeries(found.related, function(rKey, rkCB){
+				findRelated(rKey, socketCB, n-1, rkCB);
+			}, function(){
+				if(eachCB) eachCB();
 			});
-
+			
 		}else{
+
+
 			console.log("made a request");
 			/*
 			request({
@@ -86,14 +83,20 @@ var findRelated = function(keyword, callBack, n){
 					if( err ) return console.log("Mongoose Error", err, callBack());
 					console.log(n, data);
 
-					async.eachSeries(data.related, function(rKey, rkCB){
-						findRelated(rKey, rkCB, n-1 );
-					}, function(){
-						callBack();
+
+					async.mapSeries(data.related, function(rKey, rkCB){
+						findRelated(rKey, rkCB, n-1);
+					}, function(err, results){
+						var merged = [];
+							merged = merged.concat.apply(merged, results);
+						var a = {};
+						a[keyword] = merged;
+						callBack(null, a);
 					});
+
 				});
 			});
-			*/
+*/
 		}
 	});
 };
@@ -105,23 +108,8 @@ io.on('connection', function (socket) {
 
 	socket.on("bing-search", function(keyword) {
 
-		console.log("Received");
-		findRelated(keyword, function(err, result){
-			console.log("Done!", err, result);
-			socket.emit("bing-searchComplete", result);
-		});
+		findRelated(keyword, socket.emit.bind(this, "bing-searchComplete"));
 
-		
-
-		/*
-		// test output
-		var result = {}
-		result[data] = [
-				{"devide and conquer" : ['algorithm','sorting']},
-				{"graph algorithm" : ['min flow','cut property']},
-			]
-		*/
-		//socket.emit("bing-searchComplete", result);
 	});
 
 	socket.on('fbUserData',function(fbdata) {
@@ -141,5 +129,8 @@ app.get('/', function(req, res){
 	res.render('index',{
 		data : data,
 	});
+});
+app.get('/sigma', function(req, res){
+	res.render('sigma');
 });
 
