@@ -61,8 +61,18 @@ io.set ("store", new RedisStore1({
 sessionSockets.on('connection', function (err, socket, session) {
 	socket.session = session; // append session to socket
 
-	socket.on("test",function(data) {
-		socket.emit("test","good")
+	socket.on("bing-search",function(data) {
+		// Hiroki, do your magic here
+
+		// test output
+		var result = {
+			data : [
+				{"devide and conquer" : ['algorithm','sorting']},
+				{"graph algorithm" : ['min flow','cut property']},
+			]
+		};
+
+		socket.emit("bing-searchComplete",result);
 	});
 })
 
