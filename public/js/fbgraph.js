@@ -62,10 +62,13 @@
 
   function testMe(){
     // remove icon change it to loading bar
+    window.lang = $($("#nl-form").find("select")).val();
+
     $("#nl-form").remove();
     $("#sig").show();
     $("#list").show();
     $(".topspace, .main").hide(200);
+
 
 
 

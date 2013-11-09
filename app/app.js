@@ -207,7 +207,6 @@ io.on('connection', function (socket) {
 		});
 	});
 
-
 	socket.on('translate', function(pdata, data){
 	console.log("Incoming socket: pythonTranslateData...");
 

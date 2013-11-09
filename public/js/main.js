@@ -18,6 +18,7 @@
 		})
 
 		window.socket.on("PHRASE",function(data) {
+			console.log("data.phrase")
 			console.log(data.phrase)
 			if (list[data.phrase] == undefined) {
 				var WORD = {
@@ -27,7 +28,7 @@
 				}
 				//console.log("WORD")
 				//console.log(WORD)
-				var b = $("<div>",{class: "word",html: WORD.phrase + " score : " + WORD.score}).appendTo("#list");
+				var b = $("<li>",{html: "<a node=\"" +WORD.phrase + " \">" +WORD.phrase +"</a>"}).appendTo("#list");
 				WORD.pointer = b;
 				window.list[WORD] = WORD;
 			} else {
@@ -37,6 +38,13 @@
 			}
 
 			window.socket.emit("bing-search",data.phrase);
+
+			var trans {
+				target : window.lang,
+				q : data.phrase
+			}
+			window.socket.emit("translate",data.phrase);
+
 
 		});
 			window.socket.on("translate_Complete", function(data) {
