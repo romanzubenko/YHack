@@ -33,7 +33,6 @@ function downloadFile(name,file_url,directory,callback) {
 
 
 
-
 module.exports.validateEmail = validateEmail;
 module.exports.downloadFile = downloadFile;
 

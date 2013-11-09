@@ -99,6 +99,49 @@ var findRelated = function(keyword, callBack, n){
 };
 
 
+function calculateRatings(data,callback) {
+	async.parallel({
+
+	},function(err,r){
+		words : function(callback){
+			sync.map(data.words,queryRating,callback);
+		},
+		bigrams : function(callback){
+			sync.map(data.bigrams,queryRating,callback);
+		},
+		trigrams : function(callback){
+			sync.map(data.trigrams,queryRating,callback);
+		},
+	});
+	a
+}
+
+
+function queryRating(phrase,callback) {
+	var query;
+	if (typeof phrase === 'string') {
+		query = phrase;
+	} else {
+		query = phrase.join(' ');
+	}
+	async.parallel({
+		bing: function(callback){
+			callback(err,110000)
+		},
+		concept: function(callback){
+			callback(err,2000)
+		},
+	},function(err, r) {
+		if (err) {
+			console.log("MongoDB error: finding song for adding track id : " + songID);
+			callback([false,"Database error"])
+			return;
+		}
+		callback(null,r.bing + r.concept * 1000);
+	});
+}
+
+
 
 io.on('connection', function (socket) {
 
@@ -125,14 +168,14 @@ io.on('connection', function (socket) {
 
 	socket.on('fbUserData',function(fbdata) {
 		console.log("Incoming socket: fbUserData...");
-		console.log(fbdata);
 		var l = new mongoose.Corpus({text : fbdata});
 		l.save(function(err){
 			console.log("saved");
 			var python = child.spawn('python', ['nlp/freq.py', l._id.toString()]);
 			python.stdout.on('data', function (data) {
-				JSON.parse(data);
-				console.log(data.toString());
+				data = JSON.parse(data);
+				
+				data.
 			});
 		});
 	});
