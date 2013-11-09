@@ -9,8 +9,7 @@ var express = require('express'),
 	secretCookie = 'mongolia',
 	child = require('child_process'),
 	cookieParser = express.cookieParser(secretCookie),
-	server, io, schemaLG, helper,
-	ObjectID = require('mongodb').ObjectID;
+	server, io, schemaLG, helper;
 
 
 app.configure(function() {
